@@ -56,7 +56,11 @@ export class DnsValidatedDomainIdentity extends Resource {
   private readonly hostedZoneId: string;
   private readonly normalizedZoneName: string;
 
-  public constructor(scope: Construct, id: string, props: DnsValidatedDomainIdentityProps) {
+  public constructor(
+    scope: Construct,
+    id: string,
+    props: DnsValidatedDomainIdentityProps
+  ) {
     super(scope, id);
 
     const stack = Stack.of(this);
@@ -70,43 +74,71 @@ export class DnsValidatedDomainIdentity extends Resource {
     this.normalizedZoneName = props.hostedZone.zoneName;
     // Remove trailing `.` from zone name
     if (this.normalizedZoneName.endsWith(".")) {
-      this.normalizedZoneName = this.normalizedZoneName.substring(0, this.normalizedZoneName.length - 1);
+      this.normalizedZoneName = this.normalizedZoneName.substring(
+        0,
+        this.normalizedZoneName.length - 1
+      );
     }
 
     // Remove any `/hostedzone/` prefix from the Hosted Zone ID
-    this.hostedZoneId = props.hostedZone.hostedZoneId.replace(/^\/hostedzone\//, "");
+    this.hostedZoneId = props.hostedZone.hostedZoneId.replace(
+      /^\/hostedzone\//,
+      ""
+    );
 
-    const requestorFunction = new lambda.Function(this, "DomainIdentityRequestorFunction", {
-      code: lambda.Code.fromAsset(path.resolve(__dirname, "..", "lambda-packages", "dns-validated-domain-identity-handler", "dist")),
-      handler: "index.identityRequestHandler",
-      runtime: lambda.Runtime.NODEJS_14_X,
-      memorySize: 128,
-      timeout: Duration.minutes(15),
-      role: props.customResourceRole,
-    });
-    requestorFunction.addToRolePolicy(new iam.PolicyStatement({
-      actions: [
-        "ses:GetIdentityVerificationAttributes",
-        "ses:GetIdentityDkimAttributes",
-        "ses:SetIdentityDkimEnabled",
-        "ses:VerifyDomainIdentity",
-        "ses:VerifyDomainDkim",
-        "ses:ListIdentities",
-        "ses:DeleteIdentity",
-      ],
-      resources: ["*"],
-    }));
-    requestorFunction.addToRolePolicy(new iam.PolicyStatement({
-      actions: ["route53:GetChange"],
-      resources: ["*"],
-    }));
-    requestorFunction.addToRolePolicy(new iam.PolicyStatement({
-      actions: [
-          "route53:changeResourceRecordSets",
+    const requestorFunction = new lambda.Function(
+      this,
+      "DomainIdentityRequestorFunction",
+      {
+        code: lambda.Code.fromAsset(
+          path.resolve(
+            __dirname,
+            "..",
+            "lambda-packages",
+            "dns-validated-domain-identity-handler",
+            "dist"
+          )
+        ),
+        handler: "index.identityRequestHandler",
+        runtime: lambda.Runtime.NODEJS_14_X,
+        memorySize: 128,
+        timeout: Duration.minutes(15),
+        role: props.customResourceRole,
+      }
+    );
+    requestorFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          "ses:GetIdentityVerificationAttributes",
+          "ses:GetIdentityDkimAttributes",
+          "ses:SetIdentityDkimEnabled",
+          "ses:VerifyDomainIdentity",
+          "ses:VerifyDomainDkim",
+          "ses:ListIdentities",
+          "ses:DeleteIdentity",
+        ],
+        resources: ["*"],
+      })
+    );
+    requestorFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["route53:GetChange"],
+        resources: ["*"],
+      })
+    );
+    requestorFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: [
+          "route53:ChangeResourceRecordSets",
           "route53:ListResourceRecordSets",
-      ],
-      resources: [`arn:${Stack.of(requestorFunction).partition}:route53:::hostedzone/${this.hostedZoneId}`],
-    }));
+        ],
+        resources: [
+          `arn:${Stack.of(requestorFunction).partition}:route53:::hostedzone/${
+            this.hostedZoneId
+          }`,
+        ],
+      })
+    );
 
     const identity = new CustomResource(this, "IdentityRequestorResource", {
       serviceToken: requestorFunction.functionArn,
@@ -122,10 +154,14 @@ export class DnsValidatedDomainIdentity extends Resource {
       validate: (): string[] => {
         const errors: string[] = [];
         // Ensure the zone name is a parent zone of the certificate domain name
-        if (!Token.isUnresolved(this.normalizedZoneName) &&
+        if (
+          !Token.isUnresolved(this.normalizedZoneName) &&
           this.domainName !== this.normalizedZoneName &&
-          !this.domainName.endsWith("." + this.normalizedZoneName)) {
-          errors.push(`DNS zone ${this.normalizedZoneName} is not authoritative for SES identity domain name ${this.domainName}`);
+          !this.domainName.endsWith("." + this.normalizedZoneName)
+        ) {
+          errors.push(
+            `DNS zone ${this.normalizedZoneName} is not authoritative for SES identity domain name ${this.domainName}`
+          );
         }
 
         return errors;

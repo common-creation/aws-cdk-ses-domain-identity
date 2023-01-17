@@ -18,18 +18,21 @@ describe(DnsValidatedDomainIdentity.name, () => {
       hostedZone: exampleDotComZone,
     });
 
-    Template.fromStack(stack).hasResourceProperties("AWS::CloudFormation::CustomResource", {
-      DomainName: "test.example.com",
-      ServiceToken: {
-        "Fn::GetAtt": [
-          "DomainIdentityDomainIdentityRequestorFunction700A5CBC",
-          "Arn",
-        ],
-      },
-      HostedZoneId: {
-        Ref: "ExampleDotCom4D1B83AA",
-      },
-    });
+    Template.fromStack(stack).hasResourceProperties(
+      "AWS::CloudFormation::CustomResource",
+      {
+        DomainName: "test.example.com",
+        ServiceToken: {
+          "Fn::GetAtt": [
+            "DomainIdentityDomainIdentityRequestorFunction700A5CBC",
+            "Arn",
+          ],
+        },
+        HostedZoneId: {
+          Ref: "ExampleDotCom4D1B83AA",
+        },
+      }
+    );
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
       Handler: "index.identityRequestHandler",
@@ -39,7 +42,8 @@ describe(DnsValidatedDomainIdentity.name, () => {
     });
 
     Template.fromStack(stack).hasResourceProperties("AWS::IAM::Policy", {
-      PolicyName: "DomainIdentityDomainIdentityRequestorFunctionServiceRoleDefaultPolicy9D23D5BE",
+      PolicyName:
+        "DomainIdentityDomainIdentityRequestorFunctionServiceRoleDefaultPolicy9D23D5BE",
       Roles: [
         {
           Ref: "DomainIdentityDomainIdentityRequestorFunctionServiceRoleD8F10EBD",
@@ -68,7 +72,7 @@ describe(DnsValidatedDomainIdentity.name, () => {
           },
           {
             Action: [
-              "route53:changeResourceRecordSets",
+              "route53:ChangeResourceRecordSets",
               "route53:ListResourceRecordSets",
             ],
             Effect: "Allow",
@@ -102,8 +106,9 @@ describe(DnsValidatedDomainIdentity.name, () => {
       hostedZone: helloDotComZone,
     });
 
-    expect(() => Template.fromStack(stack))
-      .toThrow(/DNS zone hello.com is not authoritative for SES identity domain name example.com/);
+    expect(() => Template.fromStack(stack)).toThrow(
+      /DNS zone hello.com is not authoritative for SES identity domain name example.com/
+    );
   });
 
   it("does not try to validate unresolved tokens", () => {
@@ -140,16 +145,19 @@ describe(DnsValidatedDomainIdentity.name, () => {
     });
 
     // THEN
-    Template.fromStack(stack).hasResourceProperties("AWS::CloudFormation::CustomResource", {
-      ServiceToken: {
-        "Fn::GetAtt": [
-          "DomainIdentityDomainIdentityRequestorFunction700A5CBC",
-          "Arn",
-        ],
-      },
-      DomainName: "mydomain.com",
-      HostedZoneId: "DUMMY",
-    });
+    Template.fromStack(stack).hasResourceProperties(
+      "AWS::CloudFormation::CustomResource",
+      {
+        ServiceToken: {
+          "Fn::GetAtt": [
+            "DomainIdentityDomainIdentityRequestorFunction700A5CBC",
+            "Arn",
+          ],
+        },
+        DomainName: "mydomain.com",
+        HostedZoneId: "DUMMY",
+      }
+    );
   });
 
   it("works with imported role", () => {
@@ -161,7 +169,11 @@ describe(DnsValidatedDomainIdentity.name, () => {
     const helloDotComZone = new PublicHostedZone(stack, "HelloDotCom", {
       zoneName: "hello.com",
     });
-    const role = iam.Role.fromRoleArn(stack, "Role", "arn:aws:iam::account-id:role/role-name");
+    const role = iam.Role.fromRoleArn(
+      stack,
+      "Role",
+      "arn:aws:iam::account-id:role/role-name"
+    );
 
     // WHEN
     // tslint:disable-next-line:no-unused-expression
@@ -192,6 +204,8 @@ describe(DnsValidatedDomainIdentity.name, () => {
       hostedZone: helloDotComZone,
     });
 
-    expect(identity.identityArn).toEqual("arn:aws:ses:us-blue-5:12345678:identity/test.example.com");
+    expect(identity.identityArn).toEqual(
+      "arn:aws:ses:us-blue-5:12345678:identity/test.example.com"
+    );
   });
 });
