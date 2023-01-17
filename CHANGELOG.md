@@ -1,3 +1,20 @@
+# [2.0.0](https://github.com/common-creation/aws-cdk-ses-domain-identity/compare/v1.0.0...v2.0.0) (2023-01-17)
+
+
+### Bug Fixes
+
+* change npm publish option ([00069a4](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/00069a4bff4f20269e31988bca0635b4534a6de4))
+
+
+### Continuous Integration
+
+* ready to 2.0.0 ([e22f38f](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/e22f38fedbd68e3cf34dee4a9f8d1f71a5d2eb4f))
+
+
+### BREAKING CHANGES
+
+* this is dummy message
+
 # 1.0.0 (2023-01-17)
 
 
