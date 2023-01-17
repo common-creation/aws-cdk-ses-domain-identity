@@ -59,7 +59,7 @@ export class DnsValidatedDomainIdentity extends Resource {
   public constructor(
     scope: Construct,
     id: string,
-    props: DnsValidatedDomainIdentityProps
+    props: DnsValidatedDomainIdentityProps,
   ) {
     super(scope, id);
 
@@ -76,14 +76,14 @@ export class DnsValidatedDomainIdentity extends Resource {
     if (this.normalizedZoneName.endsWith(".")) {
       this.normalizedZoneName = this.normalizedZoneName.substring(
         0,
-        this.normalizedZoneName.length - 1
+        this.normalizedZoneName.length - 1,
       );
     }
 
     // Remove any `/hostedzone/` prefix from the Hosted Zone ID
     this.hostedZoneId = props.hostedZone.hostedZoneId.replace(
       /^\/hostedzone\//,
-      ""
+      "",
     );
 
     const requestorFunction = new lambda.Function(
@@ -96,15 +96,15 @@ export class DnsValidatedDomainIdentity extends Resource {
             "..",
             "lambda-packages",
             "dns-validated-domain-identity-handler",
-            "dist"
-          )
+            "dist",
+          ),
         ),
         handler: "index.identityRequestHandler",
         runtime: lambda.Runtime.NODEJS_14_X,
         memorySize: 128,
         timeout: Duration.minutes(15),
         role: props.customResourceRole,
-      }
+      },
     );
     requestorFunction.addToRolePolicy(
       new iam.PolicyStatement({
@@ -118,13 +118,13 @@ export class DnsValidatedDomainIdentity extends Resource {
           "ses:DeleteIdentity",
         ],
         resources: ["*"],
-      })
+      }),
     );
     requestorFunction.addToRolePolicy(
       new iam.PolicyStatement({
         actions: ["route53:GetChange"],
         resources: ["*"],
-      })
+      }),
     );
     requestorFunction.addToRolePolicy(
       new iam.PolicyStatement({
@@ -137,7 +137,7 @@ export class DnsValidatedDomainIdentity extends Resource {
             this.hostedZoneId
           }`,
         ],
-      })
+      }),
     );
 
     const identity = new CustomResource(this, "IdentityRequestorResource", {
@@ -160,7 +160,7 @@ export class DnsValidatedDomainIdentity extends Resource {
           !this.domainName.endsWith("." + this.normalizedZoneName)
         ) {
           errors.push(
-            `DNS zone ${this.normalizedZoneName} is not authoritative for SES identity domain name ${this.domainName}`
+            `DNS zone ${this.normalizedZoneName} is not authoritative for SES identity domain name ${this.domainName}`,
           );
         }
 

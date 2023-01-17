@@ -31,7 +31,7 @@ describe(DnsValidatedDomainIdentity.name, () => {
         HostedZoneId: {
           Ref: "ExampleDotCom4D1B83AA",
         },
-      }
+      },
     );
 
     Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
@@ -107,7 +107,7 @@ describe(DnsValidatedDomainIdentity.name, () => {
     });
 
     expect(() => Template.fromStack(stack)).toThrow(
-      /DNS zone hello.com is not authoritative for SES identity domain name example.com/
+      /DNS zone hello.com is not authoritative for SES identity domain name example.com/,
     );
   });
 
@@ -156,7 +156,7 @@ describe(DnsValidatedDomainIdentity.name, () => {
         },
         DomainName: "mydomain.com",
         HostedZoneId: "DUMMY",
-      }
+      },
     );
   });
 
@@ -172,7 +172,7 @@ describe(DnsValidatedDomainIdentity.name, () => {
     const role = iam.Role.fromRoleArn(
       stack,
       "Role",
-      "arn:aws:iam::account-id:role/role-name"
+      "arn:aws:iam::account-id:role/role-name",
     );
 
     // WHEN
@@ -205,7 +205,7 @@ describe(DnsValidatedDomainIdentity.name, () => {
     });
 
     expect(identity.identityArn).toEqual(
-      "arn:aws:ses:us-blue-5:12345678:identity/test.example.com"
+      "arn:aws:ses:us-blue-5:12345678:identity/test.example.com",
     );
   });
 });
