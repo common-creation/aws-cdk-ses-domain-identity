@@ -1,3 +1,35 @@
+# 1.0.0 (2023-01-17)
+
+
+### Bug Fixes
+
+* camelCase to PascalCase ([c865bb8](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/c865bb830ea466ef5cbc465e594130cd01e1904e))
+* change prettier config in vscode ([c068aff](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/c068aff5eb2546d87b9a3b6a10dde5053c7020e1))
+* **delete-record:** removing the ommitting of required parameters from DELETE record ([#16](https://github.com/common-creation/aws-cdk-ses-domain-identity/issues/16)) ([af62caa](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/af62caabe18b36f7f5f2bca1b1c1e7ac96c080b3))
+* **deps:** fix invalid CDK version in peer dependency list ([85e7d96](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/85e7d969ca06eac696349a2fa6b7d88ed53ffeca))
+* fork from mooyoul/aws-cdk-ses-domain-identity and update some dependencies ([b14fe5c](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/b14fe5ce12d4766927bfd4eaaaef3ae541bcfe6f))
+* **iam:** add addtional required SES IAM actions ([ca41f94](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/ca41f94e62e2a271e367d748be8b0c5a8efce882))
+* **iam:** fix invalid IAM action name for querying SES Domain Validation ([d693380](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/d693380dab2f83c9906e2e9922ab9539f0434c7e))
+* **iam:** fix missing IAM action for setting DKIM enabled ([ec9325f](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/ec9325ffc27d874128bd4e6a4b7aea6d224daad5))
+* refactor [#30](https://github.com/common-creation/aws-cdk-ses-domain-identity/issues/30) with FQDN usage for Route53 record name ([ace6085](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/ace6085456b9740bf5e2faa4d6e1d2d6218a0c24))
+* repository URL in package.json ([dac2491](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/dac2491ce67726b591d43129745100b0a1e578cd))
+* respect existing TXT records ([#31](https://github.com/common-creation/aws-cdk-ses-domain-identity/issues/31)) ([8635dda](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/8635ddaab94c2e83cbfae344b9403050b6356688))
+* some missing libraries ([3609f1f](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/3609f1fb502acd0110ec885e8aa61d38c1d9cffb))
+* **typing:** fix broken types location ([9162f52](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/9162f52793ee45e78dc09f9804f12eb315859322))
+
+
+### Features
+
+* add `identityArn` property ([6c1b938](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/6c1b938a61feba472c22b3336cc9de5e7f1f2894)), closes [#8](https://github.com/common-creation/aws-cdk-ses-domain-identity/issues/8)
+* initial commit ([c6ca45e](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/c6ca45e9d153fa6b7e68c2f71f045e4926e0f4ee))
+* migrate to CDK v2 ([c01e581](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/c01e581d2fbf0ddb58f4e90dbb67ef644d0097bc)), closes [#37](https://github.com/common-creation/aws-cdk-ses-domain-identity/issues/37)
+* update requestor function to use Node.js 14 ([71decd1](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/71decd18c9529f3c046038dee295d7da7e4f8288))
+
+
+### BREAKING CHANGES
+
+* Requires CDK v2
+
 # [2.0.0](https://github.com/mooyoul/aws-cdk-ses-domain-identity/compare/v1.1.0...v2.0.0) (2022-02-22)
 
 
