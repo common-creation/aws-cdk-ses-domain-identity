@@ -15,20 +15,20 @@ This package automatically validates SES Domain Identity like `aws-cdk-lib/aws-c
 
 ## About CDK Compatibility
 
-Now `aws-cdk-ses-domain-identity` has been migrated to CDK v2.
-The major version of `aws-cdk-ses-domain-identity` matches to compatible CDK version.
+Now `@common-creation/aws-cdk-ses-domain-identity` has been migrated to CDK v2.
+The major version of `@common-creation/aws-cdk-ses-domain-identity` matches to compatible CDK version.
 
-- For CDK v1 users: Use 1.x.x version
+- For CDK v1 users: Use 1.x.x version (released by upstream)
   - `npm i aws-cdk-ses-domain-identity@1 --save` 
 - For CDK v2 users: Use 2.x.x version
-  - `npm i aws-cdk-ses-domain-identity@latest --save`
-  - or `npm i aws-cdk-ses-domain-identity@2 --save`
+  - `npm i @common-creation/aws-cdk-ses-domain-identity@latest --save`
+  - or `npm i @common-creation/aws-cdk-ses-domain-identity@2 --save`
 
 ## Example
 
 ```typescript
 import * as route53 from "aws-cdk-lib/aws-route53";
-import { DnsValidatedDomainIdentity } from "aws-cdk-ses-domain-identity";
+import { DnsValidatedDomainIdentity } from "@common-creation/aws-cdk-ses-domain-identity";
 
 // ... (truncated)
     const hostedZone = route53.HostedZone.fromLookup(this, 'HostedZone', {
@@ -102,6 +102,4 @@ interface DnsValidatedDomainIdentityProps {
 
 ## License
 
-[MIT](LICENSE)
-
-See full license on [mooyoul.mit-license.org](http://mooyoul.mit-license.org/)
+[MIT License](LICENSE)

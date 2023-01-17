@@ -1,21 +1,20 @@
 {
-  "name": "aws-cdk-ses-domain-identity",
+  "name": "@common-creation/aws-cdk-ses-domain-identity",
   "version": "2.0.0",
   "description": "Constructs for provisioning and referencing domain identities which can be used in SES RuleSets and Actions Construct.",
   "main": "dist/dns-validated-domain-identity.js",
   "types": "dist/dns-validated-domain-identity.d.ts",
-  "dependencies": {},
   "peerDependencies": {
     "aws-cdk-lib": "^2.0.0",
     "constructs": "^10.0.0"
   },
   "devDependencies": {
-    "@prescott/commitlint-preset": "1.0.3",
-    "@prescott/semantic-release-config": "1.0.1",
+    "@commitlint/config-conventional": "^17.4.2",
     "@prescott/tslint-preset": "1.0.1",
     "@types/jest": "29.2.5",
     "@types/node": "14.18.12",
     "aws-cdk-lib": "2.60.0",
+    "commitlint": "^17.4.2",
     "constructs": "10.1.222",
     "husky": "8.0.3",
     "jest": "29.3.1",
@@ -26,6 +25,7 @@
     "typescript": "4.8.4"
   },
   "scripts": {
+    "bootstrap": "husky install",
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
     "build": "tsc -p tsconfig.json",
@@ -47,22 +47,17 @@
   "author": "MooYeol Prescott Lee <mooyoul@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mooyoul/aws-cdk-ses-domain-identity/issues"
+    "url": "https://github.com/common-creation/aws-cdk-ses-domain-identity/issues"
   },
-  "homepage": "https://github.com/mooyoul/aws-cdk-ses-domain-identity#readme",
+  "homepage": "https://github.com/common-creation/aws-cdk-ses-domain-identity#readme",
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
-  },
   "commitlint": {
     "extends": [
-      "@prescott/commitlint-preset"
+      "@commitlint/config-conventional"
     ]
   }
 }
