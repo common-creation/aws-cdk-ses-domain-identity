@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/common-creation/aws-cdk-ses-domain-identity/compare/v2.1.0...v2.1.1) (2023-01-18)
+
+
+### Bug Fixes
+
+* 'Invalid XML' errors at cdk destroy ([da458e4](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/da458e4de720f54202e5a9cd378bcaec7500ba37))
+
 # [2.1.0](https://github.com/common-creation/aws-cdk-ses-domain-identity/compare/v2.0.0...v2.1.0) (2023-01-18)
 
 
