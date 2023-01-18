@@ -196,7 +196,7 @@ describe(Verifier.name, () => {
             Type: "TXT",
             ResourceRecords: [
               {
-                Value: '"token"',
+                Value: `"token"`,
               },
             ],
           },
@@ -253,7 +253,7 @@ describe(Verifier.name, () => {
                   TTL: 1800,
                   ResourceRecords: [
                     {
-                      Value: '"token"',
+                      Value: `"token"`,
                     },
                   ],
                 },
