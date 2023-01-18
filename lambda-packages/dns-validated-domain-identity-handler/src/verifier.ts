@@ -153,9 +153,7 @@ export class Verifier {
       .changeResourceRecordSets({
         HostedZoneId: this.hostedZoneId,
         ChangeBatch: {
-          Changes: changes.filter(
-            (change) => change != null,
-          ) as Route53.Change[],
+          Changes: changes.filter((c) => c != null) as Route53.Change[],
         },
       })
       .promise();
