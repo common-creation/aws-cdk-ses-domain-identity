@@ -1,4 +1,8 @@
-import type { Change, ResourceRecord, ResourceRecordSet } from "aws-sdk/clients/route53";
+import type {
+  Change,
+  ResourceRecord,
+  ResourceRecordSet,
+} from "aws-sdk/clients/route53";
 
 const DEFAULT_VERIFICATION_RECORD_TTL = 1800; // 30 minutes
 
@@ -27,7 +31,9 @@ export class Record {
         return new this(
           resource.Name,
           resource.Type,
-          new Set(resource.ResourceRecords!.map((record) => JSON.parse(record.Value))),
+          new Set(
+            resource.ResourceRecords!.map((record) => JSON.parse(record.Value)),
+          ),
         );
       default:
         throw new Error("Unsupported ResourceRecord Type");
@@ -57,13 +63,18 @@ export class Record {
     this.values.delete(value);
   }
 
-  public action(type: "CREATE" | "UPSERT" | "DELETE"): Change {
+  public action(type: "CREATE" | "UPSERT" | "DELETE"): Change | null {
+    const resourceRecords = this.serialize();
+    if (!resourceRecords) {
+      return null;
+    }
+
     return {
       Action: type,
       ResourceRecordSet: {
         Name: this.name,
         Type: this.type,
-        ResourceRecords: this.serialize(),
+        ResourceRecords: resourceRecords,
         TTL: this.ttl,
       },
     };
@@ -72,9 +83,13 @@ export class Record {
   private serialize(): ResourceRecord[] {
     switch (this.type) {
       case "CNAME":
-        return Array.from(this.values).map((value) => ({ Value: value }));
+        return Array.from(this.values)
+          .filter((value) => value != null && value.length > 0)
+          .map((value) => ({ Value: value }));
       case "TXT":
-        return Array.from(this.values).map((value) => ({ Value: JSON.stringify(value) }));
+        return Array.from(this.values)
+          .filter((value) => value != null && value.length > 0)
+          .map((value) => ({ Value: JSON.stringify(value) }));
     }
   }
 }
