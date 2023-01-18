@@ -70,7 +70,11 @@ describe(Verifier.name, () => {
       });
 
       stubAWSAPI(SES, "verifyDomainIdentity", verifyDomainIdentityFake);
-      stubAWSAPI(Route53, "changeResourceRecordSets", changeResourceRecordSetsFake);
+      stubAWSAPI(
+        Route53,
+        "changeResourceRecordSets",
+        changeResourceRecordSetsFake,
+      );
       stubAWSAPI(Route53, "listResourceRecordSets", listResourceRecordSetsFake);
       stubAWSAPI(Route53, "waitFor", waitForResourceRecordSetsChangedFake);
       stubAWSAPI(SES, "waitFor", waitForIdentityExistsFake);
@@ -80,59 +84,83 @@ describe(Verifier.name, () => {
       await verifier.verifyIdentity();
 
       sinon.assert.calledOnce(verifyDomainIdentityFake);
-      sinon.assert.calledWith(verifyDomainIdentityFake, sinon.match({
-        Domain: "example.com",
-      }));
-
+      sinon.assert.calledWith(
+        verifyDomainIdentityFake,
+        sinon.match({
+          Domain: "example.com",
+        }),
+      );
 
       sinon.assert.calledOnce(changeResourceRecordSetsFake);
-      sinon.assert.calledWith(changeResourceRecordSetsFake, sinon.match({
-        HostedZoneId: "HOSTED_ZONE_ID",
-        ChangeBatch: {
-          Changes: [{
-            Action: "CREATE",
-            ResourceRecordSet: {
-              Name: "_amazonses.example.com.",
-              Type: "TXT",
-              ResourceRecords: [{
-                Value: `"token"`,
-              }],
-              TTL: 1800,
-            },
-          }],
-        },
-      }));
+      sinon.assert.calledWith(
+        changeResourceRecordSetsFake,
+        sinon.match({
+          HostedZoneId: "HOSTED_ZONE_ID",
+          ChangeBatch: {
+            Changes: [
+              {
+                Action: "CREATE",
+                ResourceRecordSet: {
+                  Name: "_amazonses.example.com.",
+                  Type: "TXT",
+                  ResourceRecords: [
+                    {
+                      Value: `"token"`,
+                    },
+                  ],
+                  TTL: 1800,
+                },
+              },
+            ],
+          },
+        }),
+      );
 
       sinon.assert.calledOnce(waitForResourceRecordSetsChangedFake);
-      sinon.assert.calledWith(waitForResourceRecordSetsChangedFake, "resourceRecordSetsChanged", sinon.match({
-        Id: "fake-id",
-      }));
+      sinon.assert.calledWith(
+        waitForResourceRecordSetsChangedFake,
+        "resourceRecordSetsChanged",
+        sinon.match({
+          Id: "fake-id",
+        }),
+      );
 
       sinon.assert.calledOnce(waitForIdentityExistsFake);
-      sinon.assert.calledWith(waitForIdentityExistsFake, "identityExists", sinon.match({
-        Identities: ["example.com"],
-      }));
+      sinon.assert.calledWith(
+        waitForIdentityExistsFake,
+        "identityExists",
+        sinon.match({
+          Identities: ["example.com"],
+        }),
+      );
     });
 
     it("should upsert Route53 Record if upsert = true", async () => {
       await verifier.verifyIdentity(true);
 
       sinon.assert.calledOnce(changeResourceRecordSetsFake);
-      sinon.assert.calledWith(changeResourceRecordSetsFake, sinon.match({
-        ChangeBatch: {
-          Changes: [{
-            Action: "UPSERT",
-            ResourceRecordSet: {
-              Name: "_amazonses.example.com.",
-              Type: "TXT",
-              ResourceRecords: [{
-                Value: `"token"`,
-              }],
-              TTL: 1800,
-            },
-          }],
-        },
-      }));
+      sinon.assert.calledWith(
+        changeResourceRecordSetsFake,
+        sinon.match({
+          ChangeBatch: {
+            Changes: [
+              {
+                Action: "UPSERT",
+                ResourceRecordSet: {
+                  Name: "_amazonses.example.com.",
+                  Type: "TXT",
+                  ResourceRecords: [
+                    {
+                      Value: `"token"`,
+                    },
+                  ],
+                  TTL: 1800,
+                },
+              },
+            ],
+          },
+        }),
+      );
     });
   });
 
@@ -162,20 +190,32 @@ describe(Verifier.name, () => {
       });
 
       listResourceRecordSetsFake = sinon.fake.resolves({
-        ResourceRecordSets: [{
-          Name: "_amazonses.example.com.",
-          Type: "TXT",
-          ResourceRecords: [{
-            Value: "\"token\"",
-          }],
-        }],
+        ResourceRecordSets: [
+          {
+            Name: "_amazonses.example.com.",
+            Type: "TXT",
+            ResourceRecords: [
+              {
+                Value: '"token"',
+              },
+            ],
+          },
+        ],
         IsTruncated: false,
         MaxItems: "100",
       });
 
-      stubAWSAPI(SES, "getIdentityVerificationAttributes", getIdentityVerificationAttributesFake);
+      stubAWSAPI(
+        SES,
+        "getIdentityVerificationAttributes",
+        getIdentityVerificationAttributesFake,
+      );
       stubAWSAPI(SES, "deleteIdentity", deleteIdentityFake);
-      stubAWSAPI(Route53, "changeResourceRecordSets", changeResourceRecordSetsFake);
+      stubAWSAPI(
+        Route53,
+        "changeResourceRecordSets",
+        changeResourceRecordSetsFake,
+      );
       stubAWSAPI(Route53, "listResourceRecordSets", listResourceRecordSetsFake);
     });
 
@@ -183,30 +223,45 @@ describe(Verifier.name, () => {
       await verifier.revokeIdentity();
 
       sinon.assert.calledOnce(getIdentityVerificationAttributesFake);
-      sinon.assert.calledWith(getIdentityVerificationAttributesFake, sinon.match({
-        Identities: ["example.com"],
-      }));
+      sinon.assert.calledWith(
+        getIdentityVerificationAttributesFake,
+        sinon.match({
+          Identities: ["example.com"],
+        }),
+      );
 
       sinon.assert.calledOnce(deleteIdentityFake);
-      sinon.assert.calledWith(deleteIdentityFake, sinon.match({
-        Identity: "example.com",
-      }));
+      sinon.assert.calledWith(
+        deleteIdentityFake,
+        sinon.match({
+          Identity: "example.com",
+        }),
+      );
 
       sinon.assert.calledOnce(changeResourceRecordSetsFake);
-      sinon.assert.calledWith(changeResourceRecordSetsFake, sinon.match({
-        HostedZoneId: "HOSTED_ZONE_ID",
-        ChangeBatch: {
-          Changes: [{
-            Action: "DELETE",
-            ResourceRecordSet: {
-              Name: "_amazonses.example.com.",
-              Type: "TXT",
-              TTL: 1800,
-              ResourceRecords: [],
-            },
-          }],
-        },
-      }));
+      sinon.assert.calledWith(
+        changeResourceRecordSetsFake,
+        sinon.match({
+          HostedZoneId: "HOSTED_ZONE_ID",
+          ChangeBatch: {
+            Changes: [
+              {
+                Action: "DELETE",
+                ResourceRecordSet: {
+                  Name: "_amazonses.example.com.",
+                  Type: "TXT",
+                  TTL: 1800,
+                  ResourceRecords: [
+                    {
+                      Value: '"token"',
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        }),
+      );
     });
 
     it("should throw Error if given domain hasn't been verified", async () => {
@@ -214,7 +269,9 @@ describe(Verifier.name, () => {
         VerificationAttributes: {},
       });
 
-      await expect(() => verifier.revokeIdentity()).rejects.toThrow("There are no identity for given domain");
+      await expect(() => verifier.revokeIdentity()).rejects.toThrow(
+        "There are no identity for given domain",
+      );
     });
   });
 
@@ -254,108 +311,151 @@ describe(Verifier.name, () => {
       });
 
       stubAWSAPI(SES, "verifyDomainDkim", verifyDomainDkimFake);
-      stubAWSAPI(Route53, "changeResourceRecordSets", changeResourceRecordSetsFake);
+      stubAWSAPI(
+        Route53,
+        "changeResourceRecordSets",
+        changeResourceRecordSetsFake,
+      );
       stubAWSAPI(Route53, "waitFor", waitForResourceRecordSetsChangedFake);
-      stubAWSAPI(SES, "getIdentityDkimAttributes", getIdentityDkimAttributesFake);
+      stubAWSAPI(
+        SES,
+        "getIdentityDkimAttributes",
+        getIdentityDkimAttributesFake,
+      );
     });
 
     it("should enable DKIM and create Route53 Records", async () => {
       await verifier.enableDKIM();
 
       sinon.assert.calledOnce(verifyDomainDkimFake);
-      sinon.assert.calledWith(verifyDomainDkimFake, sinon.match({
-        Domain: "example.com",
-      }));
-
+      sinon.assert.calledWith(
+        verifyDomainDkimFake,
+        sinon.match({
+          Domain: "example.com",
+        }),
+      );
 
       sinon.assert.calledOnce(changeResourceRecordSetsFake);
-      sinon.assert.calledWith(changeResourceRecordSetsFake, sinon.match({
-        HostedZoneId: "HOSTED_ZONE_ID",
-        ChangeBatch: {
-          Changes: [{
-            Action: "CREATE",
-            ResourceRecordSet: {
-              Name: "foo._domainkey.example.com.",
-              Type: "CNAME",
-              ResourceRecords: [{
-                Value: "foo.dkim.amazonses.com",
-              }],
-              TTL: 1800,
-            },
-          }, {
-            Action: "CREATE",
-            ResourceRecordSet: {
-              Name: "bar._domainkey.example.com.",
-              Type: "CNAME",
-              ResourceRecords: [{
-                Value: "bar.dkim.amazonses.com",
-              }],
-              TTL: 1800,
-            },
-          }, {
-            Action: "CREATE",
-            ResourceRecordSet: {
-              Name: "baz._domainkey.example.com.",
-              Type: "CNAME",
-              ResourceRecords: [{
-                Value: "baz.dkim.amazonses.com",
-              }],
-              TTL: 1800,
-            },
-          }],
-        },
-      }));
+      sinon.assert.calledWith(
+        changeResourceRecordSetsFake,
+        sinon.match({
+          HostedZoneId: "HOSTED_ZONE_ID",
+          ChangeBatch: {
+            Changes: [
+              {
+                Action: "CREATE",
+                ResourceRecordSet: {
+                  Name: "foo._domainkey.example.com.",
+                  Type: "CNAME",
+                  ResourceRecords: [
+                    {
+                      Value: "foo.dkim.amazonses.com",
+                    },
+                  ],
+                  TTL: 1800,
+                },
+              },
+              {
+                Action: "CREATE",
+                ResourceRecordSet: {
+                  Name: "bar._domainkey.example.com.",
+                  Type: "CNAME",
+                  ResourceRecords: [
+                    {
+                      Value: "bar.dkim.amazonses.com",
+                    },
+                  ],
+                  TTL: 1800,
+                },
+              },
+              {
+                Action: "CREATE",
+                ResourceRecordSet: {
+                  Name: "baz._domainkey.example.com.",
+                  Type: "CNAME",
+                  ResourceRecords: [
+                    {
+                      Value: "baz.dkim.amazonses.com",
+                    },
+                  ],
+                  TTL: 1800,
+                },
+              },
+            ],
+          },
+        }),
+      );
 
       sinon.assert.calledOnce(waitForResourceRecordSetsChangedFake);
-      sinon.assert.calledWith(waitForResourceRecordSetsChangedFake, "resourceRecordSetsChanged", sinon.match({
-        Id: "fake-id",
-      }));
+      sinon.assert.calledWith(
+        waitForResourceRecordSetsChangedFake,
+        "resourceRecordSetsChanged",
+        sinon.match({
+          Id: "fake-id",
+        }),
+      );
 
       sinon.assert.calledOnce(getIdentityDkimAttributesFake);
-      sinon.assert.calledWith(getIdentityDkimAttributesFake, sinon.match({
-        Identities: ["example.com"],
-      }));
+      sinon.assert.calledWith(
+        getIdentityDkimAttributesFake,
+        sinon.match({
+          Identities: ["example.com"],
+        }),
+      );
     });
 
     it("should upsert Route53 Records if upsert = true", async () => {
       await verifier.enableDKIM(true);
 
       sinon.assert.calledOnce(changeResourceRecordSetsFake);
-      sinon.assert.calledWith(changeResourceRecordSetsFake, sinon.match({
-        ChangeBatch: {
-          Changes: [{
-            Action: "UPSERT",
-            ResourceRecordSet: {
-              Name: "foo._domainkey.example.com.",
-              Type: "CNAME",
-              ResourceRecords: [{
-                Value: "foo.dkim.amazonses.com",
-              }],
-              TTL: 1800,
-            },
-          }, {
-            Action: "UPSERT",
-            ResourceRecordSet: {
-              Name: "bar._domainkey.example.com.",
-              Type: "CNAME",
-              ResourceRecords: [{
-                Value: "bar.dkim.amazonses.com",
-              }],
-              TTL: 1800,
-            },
-          }, {
-            Action: "UPSERT",
-            ResourceRecordSet: {
-              Name: "baz._domainkey.example.com.",
-              Type: "CNAME",
-              ResourceRecords: [{
-                Value: "baz.dkim.amazonses.com",
-              }],
-              TTL: 1800,
-            },
-          }],
-        },
-      }));
+      sinon.assert.calledWith(
+        changeResourceRecordSetsFake,
+        sinon.match({
+          ChangeBatch: {
+            Changes: [
+              {
+                Action: "UPSERT",
+                ResourceRecordSet: {
+                  Name: "foo._domainkey.example.com.",
+                  Type: "CNAME",
+                  ResourceRecords: [
+                    {
+                      Value: "foo.dkim.amazonses.com",
+                    },
+                  ],
+                  TTL: 1800,
+                },
+              },
+              {
+                Action: "UPSERT",
+                ResourceRecordSet: {
+                  Name: "bar._domainkey.example.com.",
+                  Type: "CNAME",
+                  ResourceRecords: [
+                    {
+                      Value: "bar.dkim.amazonses.com",
+                    },
+                  ],
+                  TTL: 1800,
+                },
+              },
+              {
+                Action: "UPSERT",
+                ResourceRecordSet: {
+                  Name: "baz._domainkey.example.com.",
+                  Type: "CNAME",
+                  ResourceRecords: [
+                    {
+                      Value: "baz.dkim.amazonses.com",
+                    },
+                  ],
+                  TTL: 1800,
+                },
+              },
+            ],
+          },
+        }),
+      );
     });
 
     it("should throw Error if given domain hasn't been verified", async () => {
@@ -363,7 +463,9 @@ describe(Verifier.name, () => {
         DkimAttributes: {},
       });
 
-      await expect(() => verifier.disableDKIM()).rejects.toThrow("DKIM is not configured for given domain");
+      await expect(() => verifier.disableDKIM()).rejects.toThrow(
+        "DKIM is not configured for given domain",
+      );
     });
   });
 
@@ -391,62 +493,77 @@ describe(Verifier.name, () => {
         },
       });
 
-      stubAWSAPI(SES, "getIdentityDkimAttributes", getIdentityDkimAttributesFake);
+      stubAWSAPI(
+        SES,
+        "getIdentityDkimAttributes",
+        getIdentityDkimAttributesFake,
+      );
       stubAWSAPI(SES, "setIdentityDkimEnabled", setIdentityDkimEnabledFake);
-      stubAWSAPI(Route53, "changeResourceRecordSets", changeResourceRecordSetsFake);
+      stubAWSAPI(
+        Route53,
+        "changeResourceRecordSets",
+        changeResourceRecordSetsFake,
+      );
     });
 
     it("should disable DKIM and delete Route53 Records", async () => {
       await verifier.disableDKIM();
 
       sinon.assert.calledOnce(getIdentityDkimAttributesFake);
-      sinon.assert.calledWith(getIdentityDkimAttributesFake, sinon.match({
-        Identities: ["example.com"],
-      }));
+      sinon.assert.calledWith(
+        getIdentityDkimAttributesFake,
+        sinon.match({
+          Identities: ["example.com"],
+        }),
+      );
 
       sinon.assert.calledOnce(setIdentityDkimEnabledFake);
-      sinon.assert.calledWith(setIdentityDkimEnabledFake, sinon.match({
-        Identity: "example.com",
-        DkimEnabled: false,
-      }));
+      sinon.assert.calledWith(
+        setIdentityDkimEnabledFake,
+        sinon.match({
+          Identity: "example.com",
+          DkimEnabled: false,
+        }),
+      );
 
       sinon.assert.calledOnce(changeResourceRecordSetsFake);
-      sinon.assert.calledWith(changeResourceRecordSetsFake, sinon.match({
-        HostedZoneId: "HOSTED_ZONE_ID",
-        ChangeBatch: {
-          Changes: [{
-            Action: "DELETE",
-            ResourceRecordSet: {
-              Name: "foo._domainkey.example.com.",
-              Type: "CNAME",
-              TTL: 1800,
-              ResourceRecords: [
-                { Value: "foo.dkim.amazonses.com"},
-              ],
-            },
-          }, {
-            Action: "DELETE",
-            ResourceRecordSet: {
-              Name: "bar._domainkey.example.com.",
-              Type: "CNAME",
-              TTL: 1800,
-              ResourceRecords: [
-                { Value: "bar.dkim.amazonses.com"},
-              ],
-            },
-          }, {
-            Action: "DELETE",
-            ResourceRecordSet: {
-              Name: "baz._domainkey.example.com.",
-              Type: "CNAME",
-              TTL: 1800,
-              ResourceRecords: [
-                { Value: "baz.dkim.amazonses.com"},
-              ],
-            },
-          }],
-        },
-      }));
+      sinon.assert.calledWith(
+        changeResourceRecordSetsFake,
+        sinon.match({
+          HostedZoneId: "HOSTED_ZONE_ID",
+          ChangeBatch: {
+            Changes: [
+              {
+                Action: "DELETE",
+                ResourceRecordSet: {
+                  Name: "foo._domainkey.example.com.",
+                  Type: "CNAME",
+                  TTL: 1800,
+                  ResourceRecords: [{ Value: "foo.dkim.amazonses.com" }],
+                },
+              },
+              {
+                Action: "DELETE",
+                ResourceRecordSet: {
+                  Name: "bar._domainkey.example.com.",
+                  Type: "CNAME",
+                  TTL: 1800,
+                  ResourceRecords: [{ Value: "bar.dkim.amazonses.com" }],
+                },
+              },
+              {
+                Action: "DELETE",
+                ResourceRecordSet: {
+                  Name: "baz._domainkey.example.com.",
+                  Type: "CNAME",
+                  TTL: 1800,
+                  ResourceRecords: [{ Value: "baz.dkim.amazonses.com" }],
+                },
+              },
+            ],
+          },
+        }),
+      );
     });
 
     it("should throw Error if given domain hasn't been verified", async () => {
@@ -454,7 +571,9 @@ describe(Verifier.name, () => {
         DkimAttributes: {},
       });
 
-      await expect(() => verifier.disableDKIM()).rejects.toThrow("DKIM is not configured for given domain");
+      await expect(() => verifier.disableDKIM()).rejects.toThrow(
+        "DKIM is not configured for given domain",
+      );
     });
   });
 });
