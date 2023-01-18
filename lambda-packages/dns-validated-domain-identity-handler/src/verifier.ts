@@ -115,6 +115,9 @@ export class Verifier {
     // If the record contained only the validation value, delete the record.
     // Otherwise just update the record with the value removed.
     if (identityRecord.size === 0) {
+      // Add delete value to record
+      identityRecord.add(identity.token);
+
       console.log("Deleting DNS Records used for domain verification...");
       await this.changeRecords([identityRecord.action("DELETE")]);
     } else {
@@ -146,14 +149,14 @@ export class Verifier {
   }
 
   private async changeRecords(
-    changes: (Route53.Change | null)[],
+    changes: Route53.Change[],
     wait: Wait = DEFAULT_WAIT,
   ) {
     const change = await this.route53
       .changeResourceRecordSets({
         HostedZoneId: this.hostedZoneId,
         ChangeBatch: {
-          Changes: changes.filter((c) => c != null) as Route53.Change[],
+          Changes: changes,
         },
       })
       .promise();

@@ -63,13 +63,12 @@ export class Record {
     this.values.delete(value);
   }
 
-  public action(type: "CREATE" | "UPSERT" | "DELETE"): Change | null {
+  public action(type: "CREATE" | "UPSERT" | "DELETE"): Change {
     const resourceRecords = this.serialize();
-    if (!resourceRecords) {
-      return null;
-    }
-
-    return {
+    const payload: {
+      Action: typeof type;
+      ResourceRecordSet: ResourceRecordSet;
+    } = {
       Action: type,
       ResourceRecordSet: {
         Name: this.name,
@@ -78,6 +77,7 @@ export class Record {
         TTL: this.ttl,
       },
     };
+    return payload;
   }
 
   private serialize(): ResourceRecord[] {
