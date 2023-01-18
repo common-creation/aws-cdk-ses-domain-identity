@@ -37,13 +37,20 @@ export class Verifier {
     const currentIdentityRecord = await this.getCurrentIdentityRecord();
 
     if (currentIdentityRecord) {
-      console.log("Found existing TXT record, adding value to verify domain in zone %s", this.hostedZoneId);
+      console.log(
+        "Found existing TXT record, adding value to verify domain in zone %s",
+        this.hostedZoneId,
+      );
     } else {
-      console.log("Creating a TXT record for verifying domain into zone %s", this.hostedZoneId);
+      console.log(
+        "Creating a TXT record for verifying domain into zone %s",
+        this.hostedZoneId,
+      );
     }
 
     const shouldUpsert = currentIdentityRecord || upsert;
-    const record = currentIdentityRecord ?? Record.forIdentity(this.domainName, []);
+    const record =
+      currentIdentityRecord ?? Record.forIdentity(this.domainName, []);
     record.add(identityToken);
 
     const changeId = await this.changeRecords([
@@ -61,10 +68,18 @@ export class Verifier {
     console.log("Enabling DKIM for %s", this.domainName);
     const tokens = await this.requestDKIMTokens();
 
-    console.log("Creating %d DNS records for verifying DKIM into zone %s", tokens.length, this.hostedZoneId);
-    const changeId = await this.changeRecords(tokens.map((token) =>
-      Record.forDKIM(this.domainName, token).action(upsert ? "UPSERT" : "CREATE"),
-    ));
+    console.log(
+      "Creating %d DNS records for verifying DKIM into zone %s",
+      tokens.length,
+      this.hostedZoneId,
+    );
+    const changeId = await this.changeRecords(
+      tokens.map((token) =>
+        Record.forDKIM(this.domainName, token).action(
+          upsert ? "UPSERT" : "CREATE",
+        ),
+      ),
+    );
 
     console.log("Waiting for DNS records to commit...");
     await this.waitForRecordChange(changeId);
@@ -74,17 +89,24 @@ export class Verifier {
   }
 
   public async revokeIdentity() {
-    console.log("Getting current verification state for domain %s", this.domainName);
+    console.log(
+      "Getting current verification state for domain %s",
+      this.domainName,
+    );
     const identity = await this.describeIdentity();
 
     console.log("Revoking verification for domain %s", this.domainName);
-    await this.ses.deleteIdentity({
-      Identity: this.domainName,
-    }).promise();
+    await this.ses
+      .deleteIdentity({
+        Identity: this.domainName,
+      })
+      .promise();
 
     const identityRecord = await this.getCurrentIdentityRecord();
     if (!identityRecord) {
-      console.log("Identity Record does not exist (Maybe drifted?). skipping identity record unprovisioning...");
+      console.log(
+        "Identity Record does not exist (Maybe drifted?). skipping identity record unprovisioning...",
+      );
       return;
     }
 
@@ -93,17 +115,17 @@ export class Verifier {
     // If the record contained only the validation value, delete the record.
     // Otherwise just update the record with the value removed.
     if (identityRecord.size === 0) {
-      console.log("Deleting DNS Records used for domain verification...");
-      await this.changeRecords([
-        identityRecord.action("DELETE"),
-      ]);
-    } else {
-      console.log("Updating DNS Records to remove the value used for domain verification...");
-      await this.changeRecords([
-        identityRecord.action("UPSERT"),
-      ]);
-    }
+      // Add delete value to record
+      identityRecord.add(identity.token);
 
+      console.log("Deleting DNS Records used for domain verification...");
+      await this.changeRecords([identityRecord.action("DELETE")]);
+    } else {
+      console.log(
+        "Updating DNS Records to remove the value used for domain verification...",
+      );
+      await this.changeRecords([identityRecord.action("UPSERT")]);
+    }
   }
 
   public async disableDKIM() {
@@ -111,51 +133,63 @@ export class Verifier {
     const dkim = await this.describeDKIM();
 
     console.log("Disabling DKIM for domain %s", this.domainName);
-    await this.ses.setIdentityDkimEnabled({
-      Identity: this.domainName,
-      DkimEnabled: false,
-    }).promise();
+    await this.ses
+      .setIdentityDkimEnabled({
+        Identity: this.domainName,
+        DkimEnabled: false,
+      })
+      .promise();
 
     console.log("Deleting DNS Records used for DKIM verification...");
-    await this.changeRecords(dkim.tokens.map((token) =>
-      Record.forDKIM(this.domainName, token).action("DELETE"),
-    ));
+    await this.changeRecords(
+      dkim.tokens.map((token) =>
+        Record.forDKIM(this.domainName, token).action("DELETE"),
+      ),
+    );
   }
 
   private async changeRecords(
     changes: Route53.Change[],
     wait: Wait = DEFAULT_WAIT,
   ) {
-    const change = await this.route53.changeResourceRecordSets({
-      HostedZoneId: this.hostedZoneId,
-      ChangeBatch: {
-        Changes: changes,
-      },
-    }).promise();
+    const change = await this.route53
+      .changeResourceRecordSets({
+        HostedZoneId: this.hostedZoneId,
+        ChangeBatch: {
+          Changes: changes,
+        },
+      })
+      .promise();
 
     return change.ChangeInfo.Id;
   }
 
   private async requestIdentityToken() {
-    const res = await this.ses.verifyDomainIdentity({
-      Domain: this.domainName,
-    }).promise();
+    const res = await this.ses
+      .verifyDomainIdentity({
+        Domain: this.domainName,
+      })
+      .promise();
 
     return res.VerificationToken;
   }
 
   private async requestDKIMTokens() {
-    const res = await this.ses.verifyDomainDkim({
-      Domain: this.domainName,
-    }).promise();
+    const res = await this.ses
+      .verifyDomainDkim({
+        Domain: this.domainName,
+      })
+      .promise();
 
     return res.DkimTokens;
   }
 
   private async describeIdentity() {
-    const res = await this.ses.getIdentityVerificationAttributes({
-      Identities: [this.domainName],
-    }).promise();
+    const res = await this.ses
+      .getIdentityVerificationAttributes({
+        Identities: [this.domainName],
+      })
+      .promise();
 
     const attr = res.VerificationAttributes[this.domainName];
 
@@ -170,9 +204,11 @@ export class Verifier {
   }
 
   private async describeDKIM() {
-    const res = await this.ses.getIdentityDkimAttributes({
-      Identities: [this.domainName],
-    }).promise();
+    const res = await this.ses
+      .getIdentityDkimAttributes({
+        Identities: [this.domainName],
+      })
+      .promise();
 
     const attr = res.DkimAttributes[this.domainName];
     if (!attr?.DkimEnabled) {
@@ -188,11 +224,13 @@ export class Verifier {
   private async getCurrentIdentityRecord(): Promise<Record | null> {
     const identity = Record.forIdentity(this.domainName, []);
 
-    const res = await this.route53.listResourceRecordSets({
-      HostedZoneId: this.hostedZoneId,
-      StartRecordType: identity.type,
-      StartRecordName: identity.name,
-    }).promise();
+    const res = await this.route53
+      .listResourceRecordSets({
+        HostedZoneId: this.hostedZoneId,
+        StartRecordType: identity.type,
+        StartRecordName: identity.name,
+      })
+      .promise();
 
     const first = res.ResourceRecordSets[0];
     return first?.Name === identity.name && first?.Type === identity.type
@@ -204,26 +242,26 @@ export class Verifier {
     changeId: string,
     wait: Wait = DEFAULT_WAIT,
   ) {
-    await this.route53.waitFor("resourceRecordSetsChanged", {
-      Id: changeId,
-      // Wait up to 5 minutes
-      $waiter: wait,
-    }).promise();
+    await this.route53
+      .waitFor("resourceRecordSetsChanged", {
+        Id: changeId,
+        // Wait up to 5 minutes
+        $waiter: wait,
+      })
+      .promise();
   }
 
-  private async waitForIdentityVerified(
-    wait: Wait = DEFAULT_WAIT,
-  ) {
-    await this.ses.waitFor("identityExists", {
-      Identities: [this.domainName],
-      // Wait up to 5 minutes
-      $waiter: wait,
-    }).promise();
+  private async waitForIdentityVerified(wait: Wait = DEFAULT_WAIT) {
+    await this.ses
+      .waitFor("identityExists", {
+        Identities: [this.domainName],
+        // Wait up to 5 minutes
+        $waiter: wait,
+      })
+      .promise();
   }
 
-  private async waitForDKIMVerified(
-    wait: Wait = DEFAULT_WAIT,
-  ) {
+  private async waitForDKIMVerified(wait: Wait = DEFAULT_WAIT) {
     await waitFor(
       () => this.describeDKIM(),
       (state) => state.status === "Success",
