@@ -1,3 +1,15 @@
+# [2.1.0](https://github.com/common-creation/aws-cdk-ses-domain-identity/compare/v2.0.0...v2.1.0) (2023-01-18)
+
+
+### Bug Fixes
+
+* variable name ([42c9f67](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/42c9f67878038c5ae02ff75f82b305bab97e7e1e))
+
+
+### Features
+
+* exclude empty recordsets ([016784a](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/016784a00969fa8d4fc3555e560fb24a95cdaaf7))
+
 # [2.0.0](https://github.com/common-creation/aws-cdk-ses-domain-identity/compare/v1.0.0...v2.0.0) (2023-01-17)
 
 
