@@ -42,6 +42,13 @@ export interface DnsValidatedDomainIdentityProps {
    * @default - A new role will be created
    */
   readonly customResourceRole?: iam.IRole;
+
+  /**
+   * Always upsert Route53 domain records
+   *
+   * @default false
+   */
+  readonly upsert?: boolean;
 }
 
 /**
@@ -55,6 +62,8 @@ export class DnsValidatedDomainIdentity extends Resource {
 
   private readonly hostedZoneId: string;
   private readonly normalizedZoneName: string;
+
+  private readonly upsert: boolean;
 
   public constructor(
     scope: Construct,
@@ -85,6 +94,8 @@ export class DnsValidatedDomainIdentity extends Resource {
       /^\/hostedzone\//,
       "",
     );
+
+    this.upsert = props.upsert || false;
 
     const requestorFunction = new lambda.Function(
       this,
@@ -147,6 +158,7 @@ export class DnsValidatedDomainIdentity extends Resource {
         HostedZoneId: this.hostedZoneId,
         Region: region,
         DKIM: props.dkim,
+        Upsert: this.upsert,
       },
     });
 

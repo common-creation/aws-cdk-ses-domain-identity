@@ -6,7 +6,7 @@ export class CreateCustomResourceHandler extends CustomResourceHandler<CloudForm
   public async consumeEvent() {
     const verifier = Verifier.from(this.event.ResourceProperties);
 
-    await verifier.verifyIdentity();
+    await verifier.verifyIdentity(this.event.ResourceProperties.Upsert);
     if (this.event.ResourceProperties.DKIM) {
       await verifier.enableDKIM();
     }
