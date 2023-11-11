@@ -100,7 +100,7 @@ export class DnsValidatedDomainIdentity extends Resource {
           ),
         ),
         handler: "index.identityRequestHandler",
-        runtime: lambda.Runtime.NODEJS_14_X,
+        runtime: lambda.Runtime.NODEJS_18_X,
         memorySize: 128,
         timeout: Duration.minutes(15),
         role: props.customResourceRole,
