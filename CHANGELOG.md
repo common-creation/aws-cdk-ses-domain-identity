@@ -1,3 +1,11 @@
+# [2.2.0](https://github.com/common-creation/aws-cdk-ses-domain-identity/compare/v2.1.1...v2.2.0) (2023-11-11)
+
+
+### Features
+
+* add always upsert options ([fbf36d8](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/fbf36d8fa9dde6966761885452c76c623a339d83))
+* update to node18 ([8cfca3d](https://github.com/common-creation/aws-cdk-ses-domain-identity/commit/8cfca3d1c72a39af6aaf5c7066c34490e76a1132))
+
 ## [2.1.1](https://github.com/common-creation/aws-cdk-ses-domain-identity/compare/v2.1.0...v2.1.1) (2023-01-18)
 
 
